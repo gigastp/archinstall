@@ -5,7 +5,7 @@ EDITOR=vi;
 function set_locale() {
     echo "Uncomment en_US.UTF-8 UTF-8 and other needed locales";
     echo -n "Edit, then save file(press enter to start editing): "; read -s; echo;
-    ${EDITOR} /etc/locale.conf; locale-gen || return $?;
+    ${EDITOR} /etc/locale.gen; locale-gen || return $?;
     echo "LANG=en_US.UTF-8" > /etc/locale.conf;
 }
 
