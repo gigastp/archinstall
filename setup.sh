@@ -27,8 +27,8 @@ function install() {
 
     # Timezone
     ln -sf /usr/share/zoneinfo/${TIMEREGION}/${TIMECITY} /etc/localtime \
-    && hwclock --systohc || return $?;
-
+    && hwclock --systohc || return $?; echo -e "\nTimezon: setup complated.";
+    
     set_locale || return $?; echo -e "\nLocale configured.";
     create_user || return $?; echo -e "\nUser created.";
 }
