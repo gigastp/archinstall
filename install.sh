@@ -27,6 +27,8 @@ function install() {
     pacstrap -K /mnt base linux linux-firmware ${EXTRAPACKAGES} || return $?;
     echo -e "\nSystem setup complated.";
     genfstab -U /mnt > /mnt/etc/fstab || return $?; echo -e "\n/etc/fstab: created.";
+
+    arch-chroot /mnt || return $?;
 }
 
 install
