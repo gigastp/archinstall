@@ -14,9 +14,8 @@ function mount_partiotions() {
     echo -n "Swap part(empty for skip): "; read SWAPPART;
 
     umount -q /dev/${BOOTPART} && umount -q /dev/${SYSPART};
+    mkfs.fat -F 32 /dev/${BOOTPART} && mkfs.ext4 /dev/${SYSPART} || return $?;    
     mount "/dev/${SYSPART}" /mnt && mount --mkdir "/dev/${BOOTPART}" /mnt/boot || return $?;
-
-    mkfs.fat -F 32 /dev/${BOOTPART} && mkfs.ext4 /dev/${SYSPART} || return $?;
 
     if [ $SWAPPART ]; then
         umount -q /dev/${BOOTPART}; swapon "/dev/${SWAPPART}" || return $?;
