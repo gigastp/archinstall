@@ -18,27 +18,6 @@ function mount_partiotions() {
         umount -q /dev/${BOOTPART}; swapon "/dev/${SWAPPART}" || return $?;
     fi
 }
-
-function set_locale() {
-    echo "Uncomment en_US.UTF-8 UTF-8 and other needed locales";
-    echo -n "Edit, then save file(press enter to start editing): "; read -s; echo;
-    ${EDITOR} /etc/locale.conf; locale-gen || return $?;
-    echo "LANG=en_US.UTF-8" > /etc/locale.conf;
-}
-
-function create_user() {
-    echo -n "Enter hostname: "; read PCNAME;
-    echo -n "Enter username: "; read USERNAME;
-
-    useradd -m -s /bin/bash ${USERNAME} || return $?;
-    passwd ${USERNAME};
-    while (( $? )); do
-        echo -e "\nTry again:"; passwd ${USERNAME};
-    done
-
-    TMPFILE=`mktemp`; echo -e "${USERNAME} ALL=(ALL:ALL) ALL\n" > ${TMPFILE};
-}
-
 function install() {
     mount_partiotions
     while (( $? )); do
@@ -46,13 +25,14 @@ function install() {
     done
 
     pacstrap -K /mnt base linux linux-firmware ${EXTRAPACKAGES} || return $?;
-    genfstab -U /mnt > /mnt/etc/fstab || return $?; echo "/etc/fstab created.";
+    echo -e "\nSystem setup complated.";
+    genfstab -U /mnt > /mnt/etc/fstab || return $?; echo -e "\n/etc/fstab: created.";
 
     arch-chroot /mnt || return $?;
 
     # Timezone
     ln -sf /usr/share/zoneinfo/${TIMEREGION}/${TIMECITY} /etc/localtime \
-    && hwclock --systohc || return $?;
+    && hwclock --systohc || return $?; echo -e "\nTimezon: setup complated.";
 }
 
 install
