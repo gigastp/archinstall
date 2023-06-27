@@ -1,9 +1,6 @@
 #!/bin/bash
 
-EXTRAPACKAGES="fsck\
- dhcpcd\
- vi\
- man-db man-pages texinfo";
+EXTRAPACKAGES="dhcpcd vi man-db man-pages texinfo";
 TIMEREGION=Europe;
 TIMECITY=Kiev;
 EDITOR=vi;
