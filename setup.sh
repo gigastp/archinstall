@@ -23,8 +23,6 @@ function create_user() {
 }
 
 function install() {
-    arch-chroot /mnt || return $?;
-
     # Timezone
     ln -sf /usr/share/zoneinfo/${TIMEREGION}/${TIMECITY} /etc/localtime \
     && hwclock --systohc || return $?; echo -e "\nTimezon: setup complated.";
@@ -32,3 +30,5 @@ function install() {
     set_locale || return $?; echo -e "\nLocale configured.";
     create_user || return $?; echo -e "\nUser created.";
 }
+
+install
