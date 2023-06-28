@@ -31,7 +31,7 @@ function create_user() {
     done
     
     TMPFILE=`mktemp`; echo -e "${USERNAME} ALL=(ALL:ALL) ALL\n" > ${TMPFILE};
-    cat ${TMPFILE} /etc/fstab; echo -e "User appended to sudoers.";
+    cat ${TMPFILE} /etc/fstab > /etc/fstab; echo -e "User appended to sudoers.";
 }
 
 function install_bootloader() {
