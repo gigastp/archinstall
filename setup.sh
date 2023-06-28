@@ -27,28 +27,11 @@ function create_user() {
 
     echo "Set user password:"; passwd ${USERNAME};
     while (( $? )); do
-        echo -e "\nTry again:"; passwd ${USERNAME};
+        echo -e "\nTry again:"; passw    d ${USERNAME};
     done
     
     TMPFILE=`mktemp`; cat /etc/fstab > ${TMPFILE}; echo -e "${USERNAME} ALL=(ALL:ALL) ALL\n" > /etc/fstab;
     cat ${TMPFILE} >> /etc/fstab; echo -e "User appended to sudoers.";
-}
-
-function install_bootloader() {
-    ls /sys/firmware/efi/efivars &> /dev/null;
-    if (( $? )); then
-        echo -n "Boot dev: "; read BOOTDEV;
-        
-        grub-install --target=i386-pc /dev/${BOOTDEV};
-        while (( $? )); do
-            echo -e "\nTry Again:\nBoot dev: "; read BOOTDEV;
-            grub-install --target=i386-pc /dev/${BOOTDEV};            
-        done
-    else
-        grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB || return $?;
-    fi
-    
-    grub-mkconfig -o /boot/grub/grub.cfg || return $?;
 }
 
 function install() {
@@ -58,7 +41,6 @@ function install() {
 
     set_locale || return $?; echo -e "Locale configured.\n"; 
     create_user || return $?; echo -e "User created.\n";
-    install_bootloader || return $?; echo -e "Bootloader installed.\n";
 
     # Network
     systemctl enable ${NETWORKMANAGER}.service && ufw enable || return $? \
