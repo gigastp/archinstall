@@ -2,7 +2,7 @@
 
 CPUMANUFACTURER=intel;
 EDITOR=vi;
-EXTRAPACKAGES="${CPUMANUFACTURER}-ucode grub dhcpcd ufw ${EDITOR} man-db man-pages texinfo";
+EXTRAPACKAGES="${CPUMANUFACTURER}-ucode grub sudo dhcpcd ufw ${EDITOR} man-db man-pages texinfo";
 
 function mount_partiotions() {
     echo -n "Boot part: "; read BOOTPART;
@@ -25,10 +25,10 @@ function install() {
     done
 
     pacstrap -K /mnt base linux linux-firmware ${EXTRAPACKAGES} || return $?;
-    echo -e "System setup completed.\n";
-    genfstab -U /mnt > /mnt/etc/fstab || return $?; echo -e "/etc/fstab created.\n";
+    echo -e "System setup completed.";
+    genfstab -U /mnt > /mnt/etc/fstab || return $?; echo -e "/etc/fstab created.";
 
-    arch-chroot /mnt || return $?;
+    echo -e "Entering in chroot...\n"; arch-chroot /mnt || return $?;
 }
 
 install
