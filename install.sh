@@ -25,7 +25,7 @@ function install() {
     done
 
     pacstrap -K /mnt base linux linux-firmware ${EXTRAPACKAGES} || return $?;
-    echo -e "\nSystem setup complated.";
+    echo -e "\nSystem setup completed.";
     genfstab -U /mnt > /mnt/etc/fstab || return $?; echo -e "\n/etc/fstab: created.";
 
     arch-chroot /mnt || return $?;
