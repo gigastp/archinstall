@@ -8,6 +8,7 @@ NETWORKMANAGER=dhcpcd;
 function set_locale() {
     echo "Uncomment en_US.UTF-8 UTF-8 and other needed locales";
     echo -n "Edit, then save file(press enter to start editing): "; read -s; echo;
+    
     ${EDITOR} /etc/locale.gen; locale-gen || return $?;
     echo "LANG=en_US.UTF-8" > /etc/locale.conf;
 }
@@ -15,10 +16,16 @@ function set_locale() {
 function create_user() {
     echo -n "Enter hostname: "; read PCNAME;
     echo -n "Enter username: "; read USERNAME;
-    echo ${PCNAME} > /etc/hostname
-    useradd -m -s /bin/bash ${USERNAME} || return $?;
     
-    passwd ${USERNAME};
+    echo ${PCNAME} > /etc/hostname    
+    useradd -m -s /bin/bash ${USERNAME} || return $?;
+
+    echo "Set root password:"; passwd;
+    while (( $? )); do
+        echo -e "\nTry Again"; passwd;
+    done
+
+    echo "Set user password:"; passwd ${USERNAME};
     while (( $? )); do
         echo -e "\nTry again:"; passwd ${USERNAME};
     done
@@ -34,7 +41,7 @@ function install_bootloader() {
         
         grub-install --target=i386-pc /dev/${BOOTDEV} || return $?;
         while (( $? )); do
-            echo -ne "Try Again:\nBoot dev: "; read BOOTDEV;
+            echo -e "\nTry Again:\nBoot dev: "; read BOOTDEV;
             grub-install --target=i386-pc /dev/${BOOTDEV};            
         done
     else
