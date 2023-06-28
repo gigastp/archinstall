@@ -62,8 +62,7 @@ function install() {
     create_user || return $?; echo -e "User created.\n";
 
     # Network
-    systemctl enable ${NETWORKMANAGER}.service && ufw enable || return $? \
-    && echo -e "Network configured.\n";
+    systemctl enable ${NETWORKMANAGER}.service || return $? && echo -e "Network configured.\n";
 }
 
 install
