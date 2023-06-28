@@ -25,7 +25,7 @@ function create_user() {
         echo -e "\nTry Again"; passwd;
     done
 
-    echo "Set user password:"; passwd ${USERNAME};
+    echo -e "\nSet user password:"; passwd ${USERNAME};
     while (( $? )); do
         echo -e "\nTry again:"; passw    d ${USERNAME};
     done
