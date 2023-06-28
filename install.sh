@@ -1,9 +1,8 @@
 #!/bin/bash
 
-EXTRAPACKAGES="dhcpcd vi man-db man-pages texinfo";
-TIMEREGION=Europe;
-TIMECITY=Kiev;
+CPUMANUFACTURER=intel;
 EDITOR=vi;
+EXTRAPACKAGES="${CPUMANUFACTURER}-ucode dhcpcd ufw ${EDITOR} man-db man-pages texinfo";
 
 function mount_partiotions() {
     echo -n "Boot part: "; read BOOTPART;
@@ -18,6 +17,7 @@ function mount_partiotions() {
         umount -q /dev/${BOOTPART}; swapon "/dev/${SWAPPART}" || return $?;
     fi
 }
+
 function install() {
     mount_partiotions
     while (( $? )); do
