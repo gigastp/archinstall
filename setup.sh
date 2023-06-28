@@ -35,7 +35,7 @@ function create_user() {
 }
 
 function install_bootloader() {
-    ls /sys/firmware/efi/efivars > /dev/null;
+    ls /sys/firmware/efi/efivars &> /dev/null;
     if (( $? )); then
         echo -n "Boot dev: "; read BOOTDEV;
         
