@@ -39,7 +39,7 @@ function install_bootloader() {
     if (( $? )); then
         echo -n "Boot dev: "; read BOOTDEV;
         
-        grub-install --target=i386-pc /dev/${BOOTDEV} || return $?;
+        grub-install --target=i386-pc /dev/${BOOTDEV};
         while (( $? )); do
             echo -e "\nTry Again:\nBoot dev: "; read BOOTDEV;
             grub-install --target=i386-pc /dev/${BOOTDEV};            
