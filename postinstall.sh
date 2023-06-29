@@ -55,3 +55,5 @@ function install() {
     systemctl --user enable ${SOUNDMANAGER}.service || return $?;
     echo "Sound manager(${SOUNDMANAGER}) configured.";
 }
+
+install
