@@ -41,7 +41,7 @@ function install_packages() {
 
     sudo ${EDITOR} /etc/pacman.conf && sudo pacman -Sy ${TOINSTALL};
     while (( $? )); do
-        echo "Try again(press enter to start editing):";
+        echo -n "Try again(press enter to start editing):"; read -s; echo;
         sudo ${EDITOR} /etc/pacman.conf && sudo pacman -Sy ${TOINSTALL};
     done
 }
