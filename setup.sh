@@ -18,7 +18,11 @@ function create_user() {
     echo -n "Enter username: "; read USERNAME;
     
     echo ${PCNAME} > /etc/hostname;
-    useradd -m -s /bin/bash -b /home/ "${USERNAME}" || return $?;
+    
+    # Probably bug in useradd or pwd (when arg of option -b ended with /):
+    # output of pwd after user creation: /home//<username>
+    # after `cd ~` pwd showed correct path
+    useradd -m -s /bin/bash -b /home "${USERNAME}" || return $?;
 
     echo "Set root password:"; passwd;
     while (( $? )); do
