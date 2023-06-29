@@ -22,7 +22,7 @@ function create_user() {
     # Probably bug in useradd or pwd (when arg of option -b ended with /):
     # output of pwd after user creation: /home//<username>
     # Note: after `cd ~` pwd showed correct path
-    useradd -m -s /bin/bash -b /home "${USERNAME}" || return $?;
+    useradd -m -s /bin/bash "${USERNAME}" || return $?;
 
     echo "Set root password:"; passwd;
     while (( $? )); do
