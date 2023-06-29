@@ -18,16 +18,16 @@ function create_user() {
     echo -n "Enter username: "; read USERNAME;
     
     echo ${PCNAME} > /etc/hostname;
-    useradd -m -s /bin/bash ${USERNAME} -b /home/{$USERNAME} || return $?;
+    useradd -m -s /bin/bash -b "/home/{$USERNAME}" "${USERNAME}" || return $?;
 
     echo "Set root password:"; passwd;
     while (( $? )); do
         echo -e "\nTry Again"; passwd;
     done
 
-    echo -e "\nSet user password:"; passwd ${USERNAME};
+    echo -e "\nSet user password:"; passwd "${USERNAME}";
     while (( $? )); do
-        echo -e "\nTry again:"; passwd ${USERNAME};
+        echo -e "\nTry again:"; passwd "${USERNAME}";
     done
     
     TMPFILE=`mktemp`; cat /etc/sudoers > ${TMPFILE}; echo -e "${USERNAME} ALL=(ALL:ALL) ALL\n" > /etc/sudoers;
