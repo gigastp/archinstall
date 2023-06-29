@@ -8,9 +8,10 @@ EDITOR=vi;
 
 # Extra packages
 TERMINALAPPS="bash clamav vim mc ranger ncdu htop neofetch";
-BASICAPPS="xfce4-terminal firefox thunar file-roller clamtk xed pix\
- kolourpaint xreader djview vlc audacious libreoffice-still qbittorrent";
-DEVELOPAPPS="gcc g++ gdb make cmake git sqlite sqlitebrowser code\
+BASICAPPS="xfce4-terminal firefox thunar file-roller clamtk xed 
+ lximage-qt kolourpaint xreader djview vlc audacious libreoffice-still\
+ gimp qbittorrent";
+DEVELOPAPPS="gcc gdb make cmake git sqlite sqlitebrowser code\
  notepadqq qtcreator qt5-doc";
 TOOLAPPS="cherrytree flameshot kdeconnect";
 INTERNETAPPS="telegram-desktop discord";
@@ -35,7 +36,7 @@ function install_packages() {
     fi
 
     echo -n "Some packages may nead 32-bit dependency, to install ";
-    echo -e "them you nead\n enable multilib repo.";
+    echo -e "them you nead\nenable multilib repo.\n";
     echo "Uncomment [multilib] section, then save and close file";
     echo -n "(press enter to start editing):"; read -s; echo;
 
