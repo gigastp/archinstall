@@ -18,7 +18,7 @@ function create_user() {
     echo -n "Enter username: "; read USERNAME;
     
     echo ${PCNAME} > /etc/hostname    
-    useradd -mb -s /bin/bash ${USERNAME} || return $?;
+    useradd -m -b -s /bin/bash ${USERNAME} || return $?;
 
     echo "Set root password:"; passwd;
     while (( $? )); do
@@ -56,7 +56,7 @@ function install() {
     
     # Timezone
     ln -sf /usr/share/zoneinfo/${TIMEREGION}/${TIMECITY} /etc/localtime \
-    && hwclock --systohc || return $?; echo -e "Timezone setup complated.\n";
+    && hwclock --systohc || return $?; echo -e "Timezone setup completed.\n";
 
     set_locale || return $?; echo -e "Locale configured.\n"; 
     create_user || return $?; echo -e "User created.\n";
