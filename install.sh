@@ -2,7 +2,8 @@
 
 CPUMANUFACTURER=intel;
 EDITOR=vi;
-EXTRAPACKAGES="${CPUMANUFACTURER}-ucode grub sudo dhcpcd ${EDITOR} man-db man-pages texinfo";
+EXTRAPACKAGES="${CPUMANUFACTURER}-ucode grub sudo dhcpcd ${EDITOR}\
+ bash-completion man-db man-pages texinfo";
 
 function mount_partiotions() {
     echo -n "Boot part: "; read BOOTPART;
