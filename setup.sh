@@ -27,7 +27,7 @@ function create_user() {
 
     echo -e "\nSet user password:"; passwd ${USERNAME};
     while (( $? )); do
-        echo -e "\nTry again:"; passw    d ${USERNAME};
+        echo -e "\nTry again:"; passwd ${USERNAME};
     done
     
     TMPFILE=`mktemp`; cat /etc/sudoers > ${TMPFILE}; echo -e "${USERNAME} ALL=(ALL:ALL) ALL\n" > /etc/sudoers;
