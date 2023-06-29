@@ -18,7 +18,7 @@ function create_user() {
     echo -n "Enter username: "; read USERNAME;
     
     echo ${PCNAME} > /etc/hostname;
-    useradd -m -s /bin/bash -b "/home/ "${USERNAME}" || return $?;
+    useradd -m -s /bin/bash -b /home/ "${USERNAME}" || return $?;
 
     echo "Set root password:"; passwd;
     while (( $? )); do
