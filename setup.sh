@@ -30,7 +30,7 @@ function create_user() {
         echo -e "\nTry again:"; passw    d ${USERNAME};
     done
     
-    TMPFILE=`mktemp`; cat /etc/sudoers > ${TMPFILE}; echo -e "${USERNAME} ALL=(ALL:ALL) ALL\n" > /etc/fstab;
+    TMPFILE=`mktemp`; cat /etc/sudoers > ${TMPFILE}; echo -e "${USERNAME} ALL=(ALL:ALL) ALL\n" > /etc/sudoers;
     cat ${TMPFILE} >> /etc/sudoers; echo -e "User appended to sudoers.";
 }
 
