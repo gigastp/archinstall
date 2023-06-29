@@ -22,7 +22,7 @@ function create_user() {
 
     echo "Set root password:"; passwd;
     while (( $? )); do
-        echo -e "\nTry Again"; passwd;
+        echo -e "\nTry again:"; passwd;
     done
 
     echo -e "\nSet user password:"; passwd "${USERNAME}";
@@ -41,7 +41,7 @@ function install_bootloader() {
         
         grub-install --target=i386-pc /dev/${BOOTDEV};
         while (( $? )); do
-            echo -e "\nTry Again:\nBoot dev: "; read BOOTDEV;
+            echo -e "\nTry again:\nBoot dev: "; read BOOTDEV;
             grub-install --target=i386-pc /dev/${BOOTDEV};            
         done
     else
