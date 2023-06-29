@@ -15,7 +15,7 @@ DEVELOPAPPS="gcc gdb make cmake git sqlite sqlitebrowser code\
  notepadqq qtcreator qt5-doc";
 TOOLAPPS="cherrytree flameshot kdeconnect";
 INTERNETAPPS="telegram-desktop discord";
-GAMEAPPS="wine dolphin-emu lutris";
+GAMEAPPS="steam wine dolphin-emu lutris";
 OTHERAPPS="virtualbox";
 
 TOINSTALL="${GPUDRIVER} ${DISPLAYMANAGER}\
@@ -35,8 +35,16 @@ function install_packages() {
         fi
     fi
     
-    sudo pacman -Sy ${TOINSTALL};
+    echo -n "Some packages may nead 32-bit dependency, to install ";
+    echo -e "them you nead\nenable multilib repo.\n";
+    echo "Uncomment [multilib] section, then save and close file";
+    echo -n "(press enter to start editing):"; read -s; echo;
 
+    sudo ${EDITOR} /etc/pacman.conf && sudo pacman -Sy ${TOINSTALL};
+    while (( $? )); do
+        echo -n "Try again(press enter to start editing):"; read -s; echo;
+        sudo ${EDITOR} /etc/pacman.conf && sudo pacman -Sy ${TOINSTALL};
+    done
 }
 
 function install() {
