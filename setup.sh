@@ -52,7 +52,7 @@ function install_bootloader() {
 }
 
 function install() {
-    install_bootloader || return $?; echo -e "\nBootloader installed.";
+    install_bootloader || return $?; echo -e "Bootloader installed.\n";
     
     # Timezone
     ln -sf /usr/share/zoneinfo/${TIMEREGION}/${TIMECITY} /etc/localtime \
