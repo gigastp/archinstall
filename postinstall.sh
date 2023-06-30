@@ -11,12 +11,11 @@ TERMINALAPPS="clamav vim mc ranger ncdu htop neofetch";
 BASICAPPS="xfce4-terminal firefox thunar file-roller clamtk xed lximage-qt kolourpaint xreader djview vlc audacious libreoffice-still gimp qbittorrent";
 DEVELOPAPPS="gcc gdb make cmake git sqlite sqlitebrowser code qtcreator qt5-doc";
 TOOLAPPS="cherrytree flameshot kdeconnect";
-INTERNETAPPS="telegram-desktop discord";
+INTERNETAPPS="wireshark-qt telegram-desktop discord";
 GAMEAPPS="steam wine dolphin-emu lutris";
 OTHERAPPS="virtualbox";
 
-TOINSTALL="${GPUDRIVER} ${DISPLAYMANAGER}\
- ${DESKTOPENVIRONMANT} ${SOUNDMANAGER} ${TERMINALAPPS} ${BASICAPPS}\
+TOINSTALL="${GPUDRIVER} ${DESKTOPENVIRONMANT} ${SOUNDMANAGER} ${TERMINALAPPS} ${BASICAPPS}\
  ${DEVELOPAPPS} ${TOOLAPPS} ${INTERNETAPPS} ${GAMEAPPS} ${OTHERAPPS}";
 
 function install_packages() {
@@ -24,6 +23,10 @@ function install_packages() {
         TOINSTALL="${TOINSTALL} lightdm-gtk-greeter";
     fi
 
+    if [ ${DISPLAYMANAGER} ]; then
+        TOINSTALL="${TOINSTALL} ${DISPLAYMANAGER}";
+    fi
+    
     if [ ${SOUNDMANAGER} == "pulseaudio" ]; then
         TOINSTALL="${TOINSTALL} pulseaudio-alsa";
     
@@ -32,8 +35,8 @@ function install_packages() {
         fi
     fi
 
-    echo -n "Some packages may nead 32-bit dependency, to install ";
-    echo -e "them you nead\nenable multilib repo.\n";
+    echo "Some packages may nead 32-bit dependency, to install them you nead";
+    echo -e "enable multilib repo.\n";
     echo "Uncomment [multilib] section, then save and close file.";
     echo -n "Press enter to start editing:"; read -s; echo;
 
@@ -47,8 +50,10 @@ function install_packages() {
 function install() {
     echo "== Installing packages..."; install_packages || return $?;
 
-    echo -e "== Configuring display manager(${DISPLAYMANAGER})...";    
-    sudo systemctl enable ${DISPLAYMANAGER}.service || return $?; 
+    if [ ${DISPLAYMANAGER} ]; then
+        echo -e "== Configuring display manager(${DISPLAYMANAGER})...";    
+        sudo systemctl enable ${DISPLAYMANAGER}.service || return $?;
+    fi
     
     echo -e "== Configuring sound manager(${SOUNDMANAGER})...";    
     systemctl --user enable ${SOUNDMANAGER}.service || return $?;

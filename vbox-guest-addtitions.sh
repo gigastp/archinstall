@@ -5,6 +5,7 @@ function install() {
     mount /lib/virtualbox/additions/VBoxGuestAdditions.iso /mnt || return $?;
     /mnt/VBoxLinuxAdditions.run && umount /mnt || return $?;
     pacman -Rscun virtualbox-guest-iso;
+    echo -e "\n< Setup complated >";
 }
 
 install

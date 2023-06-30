@@ -35,6 +35,8 @@ function install() {
     
     echo -e "== Entering the chroot enviormant..."; 
     arch-chroot /mnt || return $?;
+
+    echo -e "\n< Setup complated >";
 }
 
 install
