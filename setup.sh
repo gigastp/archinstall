@@ -15,27 +15,29 @@ function set_locale() {
 
 function create_user() {
     echo -n "Enter hostname: "; read PCNAME;
-    echo -n "Enter username: "; read USERNAME;
-    
     echo ${PCNAME} > /etc/hostname;
     
+    echo "Set root password"; passwd;
+    while (( $? )); do
+        echo -e "\nTry again:"; passwd;
+    done
+    
+    echo -n "Enter username: "; read USERNAME;
     # Probably bug in useradd or pwd (when arg of option -b ended with /):
     # output of pwd after user creation: /home//<username>
     # Note: after `cd ~` pwd showed correct path
     useradd -m -s /bin/bash "${USERNAME}" || return $?;
-
-    echo "Set root password:"; passwd;
-    while (( $? )); do
-        echo -e "\nTry again:"; passwd;
-    done
-
-    echo -e "\nSet user password:"; passwd "${USERNAME}";
+    
+    echo -e "\nSet user($USERNAME) password"; passwd "${USERNAME}";
     while (( $? )); do
         echo -e "\nTry again:"; passwd "${USERNAME}";
     done
     
-    TMPFILE=`mktemp`; cat /etc/sudoers > ${TMPFILE}; echo -e "${USERNAME} ALL=(ALL:ALL) ALL\n" > /etc/sudoers;
-    cat ${TMPFILE} >> /etc/sudoers; echo -e "User appended to sudoers.";
+    echo -e "\nAppending user to sudoers...";
+
+    TMPFILE=`mktemp`; cat /etc/sudoers > ${TMPFILE}; 
+    echo -e "${USERNAME} ALL=(ALL:ALL) ALL\n" > /etc/sudoers; 
+    cat ${TMPFILE} >> /etc/sudoers;
 }
 
 function install_bootloader() {
@@ -56,17 +58,19 @@ function install_bootloader() {
 }
 
 function install() {
-    install_bootloader || return $?; echo -e "Bootloader installed.\n";
-    
-    # Timezone
+    echo "== Installing bootloader..."; install_bootloader || return $?;
+    echo "== Configuring timezone...";
+
     ln -sf /usr/share/zoneinfo/${TIMEREGION}/${TIMECITY} /etc/localtime \
-    && hwclock --systohc || return $?; echo -e "Timezone setup completed.\n";
+    && hwclock --systohc || return $?;
 
-    set_locale || return $?; echo -e "Locale configured.\n"; 
-    create_user || return $?; echo -e "User created.\n";
+    echo "== Configuring locale..."; set_locale || return $?;
+    echo "== Creating user..."; create_user || return $?;
+    echo "== Configuring network...";
 
-    # Network
-    systemctl enable ${NETWORKMANAGER}.service || return $? && echo -e "Network configured.\n";
+    #systemctl enable ${NETWORKMANAGER}.service || return $?;
+
+    echo -e "\n< Setup complated >";
 }
 
 install

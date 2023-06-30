@@ -7,12 +7,9 @@ SOUNDMANAGER=pulseaudio;
 EDITOR=vi;
 
 # Extra packages
-TERMINALAPPS="bash clamav vim mc ranger ncdu htop neofetch";
-BASICAPPS="xfce4-terminal firefox thunar file-roller clamtk xed 
- lximage-qt kolourpaint xreader djview vlc audacious libreoffice-still\
- gimp qbittorrent";
-DEVELOPAPPS="gcc gdb make cmake git sqlite sqlitebrowser code\
- notepadqq qtcreator qt5-doc";
+TERMINALAPPS="clamav vim mc ranger ncdu htop neofetch";
+BASICAPPS="xfce4-terminal firefox thunar file-roller clamtk xed lximage-qt kolourpaint xreader djview vlc audacious libreoffice-still gimp qbittorrent";
+DEVELOPAPPS="gcc gdb make cmake git sqlite sqlitebrowser code qtcreator qt5-doc";
 TOOLAPPS="cherrytree flameshot kdeconnect";
 INTERNETAPPS="telegram-desktop discord";
 GAMEAPPS="steam wine dolphin-emu lutris";
@@ -26,7 +23,7 @@ function install_packages() {
     if [ ${DISPLAYMANAGER} == "lightdm" ]; then
         TOINSTALL="${TOINSTALL} lightdm-gtk-greeter";
     fi
-    
+
     if [ ${SOUNDMANAGER} == "pulseaudio" ]; then
         TOINSTALL="${TOINSTALL} pulseaudio-alsa";
     
@@ -34,11 +31,11 @@ function install_packages() {
             TOINSTALL="${TOINSTALL} pavucontrol xfce4-pulseaudio-plugin";
         fi
     fi
-    
+
     echo -n "Some packages may nead 32-bit dependency, to install ";
     echo -e "them you nead\nenable multilib repo.\n";
-    echo "Uncomment [multilib] section, then save and close file";
-    echo -n "(press enter to start editing):"; read -s; echo;
+    echo "Uncomment [multilib] section, then save and close file.";
+    echo -n "Press enter to start editing:"; read -s; echo;
 
     sudo ${EDITOR} /etc/pacman.conf && sudo pacman -Sy ${TOINSTALL};
     while (( $? )); do
@@ -48,13 +45,15 @@ function install_packages() {
 }
 
 function install() {
-    install_packages || return $?; echo -e "Packages installed.\n";
-    
+    echo "== Installing packages..."; install_packages || return $?;
+
+    echo -e "== Configuring display manager(${DISPLAYMANAGER})...";    
     sudo systemctl enable ${DISPLAYMANAGER}.service || return $?; 
-    echo "Display manager(${DISPLAYMANAGER}) configured.";
     
+    echo -e "== Configuring sound manager(${SOUNDMANAGER})...";    
     systemctl --user enable ${SOUNDMANAGER}.service || return $?;
-    echo "Sound manager(${SOUNDMANAGER}) configured.";
+
+    echo -e "\n< Setup complated >";
 }
 
 install

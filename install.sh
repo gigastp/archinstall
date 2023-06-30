@@ -20,15 +20,21 @@ function mount_partiotions() {
 }
 
 function install() {
+    echo -e  "== Mounting partiotions..."; 
+    
     mount_partiotions
     while (( $? )); do
-        echo -e "\nTry again:"; mount_partiotions;
+        echo -e "\nTry again:"; mount_partiotions && echo -e  "Partitions mounted.\n"
     done
 
+    echo -e "== Installing system...";
     pacstrap -K /mnt base linux linux-firmware ${EXTRAPACKAGES} || return $?;
-    echo -e "System setup completed.";
-    genfstab -U /mnt > /mnt/etc/fstab || return $?; echo -e "/etc/fstab created.";
-    echo -e "Entering in chroot...\n"; arch-chroot /mnt || return $?;
+    
+    echo -e "== Creating /etc/fstab..."; 
+    genfstab -U /mnt > /mnt/etc/fstab || return $?; echo -e "/etc/fstab created.\n";
+    
+    echo -e "== Entering the chroot enviormant..."; 
+    arch-chroot /mnt || return $?;
 }
 
 install
