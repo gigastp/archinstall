@@ -6,7 +6,7 @@ EDITOR=vi;
 NETWORKMANAGER=dhcpcd;
 
 function set_locale() {
-    echo "Uncomment en_US.UTF-8 UTF-8 and other needed locales";
+    echo -e "\nUncomment en_US.UTF-8 UTF-8 and other needed locales";
     echo -n "Edit, then save and close file(press enter to start editing): "; read -s; echo;
     
     ${EDITOR} /etc/locale.gen; locale-gen || return $?;
@@ -14,7 +14,7 @@ function set_locale() {
 }
 
 function create_user() {
-    echo -n "Enter hostname: "; read PCNAME;
+    echo -en "\nEnter hostname: "; read PCNAME;
     echo ${PCNAME} > /etc/hostname;
     
     echo "Set root password"; passwd;
@@ -33,7 +33,7 @@ function create_user() {
         echo -e "\nTry again:"; passwd "${USERNAME}";
     done
     
-    echo -e "\nAppending user to sudoers...";
+    echo -e "Appending user to sudoers...";
 
     TMPFILE=`mktemp`; cat /etc/sudoers > ${TMPFILE}; 
     echo -e "${USERNAME} ALL=(ALL:ALL) ALL\n" > /etc/sudoers; 
@@ -41,7 +41,7 @@ function create_user() {
 }
 
 function install_bootloader() {
-    ls /sys/firmware/efi/efivars &> /dev/null;
+    echo && ls /sys/firmware/efi/efivars &> /dev/null;
     if (( $? )); then
         echo -n "Boot dev: "; read BOOTDEV;
         
@@ -66,9 +66,9 @@ function install() {
 
     echo "== Configuring locale..."; set_locale || return $?;
     echo "== Creating user..."; create_user || return $?;
-    echo "== Configuring network...";
 
-    #systemctl enable ${NETWORKMANAGER}.service || return $?;
+    echo "== Configuring network...";
+    systemctl enable ${NETWORKMANAGER}.service || return $?;
 
     echo -e "\n< Setup complated >";
 }

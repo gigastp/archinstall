@@ -24,14 +24,14 @@ function install() {
     
     mount_partiotions
     while (( $? )); do
-        echo -e "\nTry again:"; mount_partiotions && echo -e  "Partitions mounted.\n"
+        echo -e "\nTry again:"; mount_partiotions;
     done
 
     echo -e "== Installing system...";
     pacstrap -K /mnt base linux linux-firmware ${EXTRAPACKAGES} || return $?;
     
     echo -e "== Creating /etc/fstab..."; 
-    genfstab -U /mnt > /mnt/etc/fstab || return $?; echo -e "/etc/fstab created.\n";
+    genfstab -U /mnt > /mnt/etc/fstab || return $?;
     
     echo -e "== Entering the chroot enviormant..."; 
     arch-chroot /mnt || return $?;

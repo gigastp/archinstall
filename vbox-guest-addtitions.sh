@@ -1,6 +1,7 @@
 #!bin/bash
 
-pacman -S virtualbox-guest-iso;
-mount /lib/virtualbox/additions/VBoxGuestAdditions.iso;
-/mnt/VBoxLinuxAdditions.run;
-umount /mnt;
+function install() {
+    pacman -S virtualbox-guest-iso || return $?;
+    mount /lib/virtualbox/additions/VBoxGuestAdditions.iso || return $?;
+    /mnt/VBoxLinuxAdditions.run && umount /mnt || return $?
+}
