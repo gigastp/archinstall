@@ -26,7 +26,7 @@ function install_packages() {
     if [ ${DISPLAYMANAGER} ]; then
         TOINSTALL="${TOINSTALL} ${DISPLAYMANAGER}";
     fi
-    
+
     if [ ${SOUNDMANAGER} == "pulseaudio" ]; then
         TOINSTALL="${TOINSTALL} pulseaudio-alsa";
     
@@ -35,9 +35,8 @@ function install_packages() {
         fi
     fi
 
-    echo "Some packages may nead 32-bit dependency, to install them you nead";
-    echo -e "enable multilib repo.\n";
-    echo "Uncomment [multilib] section, then save and close file.";
+    echo "Some packages may nead 32-bit dependency, to install them you nead enable ";
+    echo -e "multilib repo.\n\nUncomment [multilib] section, then save and close file.";
     echo -n "Press enter to start editing:"; read -s; echo;
 
     sudo ${EDITOR} /etc/pacman.conf && sudo pacman -Sy ${TOINSTALL};
@@ -58,6 +57,7 @@ function install() {
     echo -e "== Configuring sound manager(${SOUNDMANAGER})...";    
     systemctl --user enable ${SOUNDMANAGER}.service || return $?;
 
+    echo -e "== Removing cache files..."; sudo rm -r /var/cache/pacman/pkg/* || return $?;
     echo -e "\n< Setup complated >";
 }
 

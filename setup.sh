@@ -59,8 +59,8 @@ function install_bootloader() {
 
 function install() {
     echo "== Installing bootloader..."; install_bootloader || return $?;
+    
     echo "== Configuring timezone...";
-
     ln -sf /usr/share/zoneinfo/${TIMEREGION}/${TIMECITY} /etc/localtime \
     && hwclock --systohc || return $?;
 

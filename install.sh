@@ -20,9 +20,7 @@ function mount_partiotions() {
 }
 
 function install() {
-    echo -e  "== Mounting partiotions..."; 
-    
-    mount_partiotions
+    echo -e  "== Mounting partiotions..."; mount_partiotions
     while (( $? )); do
         echo -e "\nTry again:"; mount_partiotions;
     done
@@ -30,12 +28,9 @@ function install() {
     echo -e "== Installing system...";
     pacstrap -K /mnt base linux linux-firmware ${EXTRAPACKAGES} || return $?;
     
-    echo -e "== Creating /etc/fstab..."; 
-    genfstab -U /mnt > /mnt/etc/fstab || return $?;
-    
-    echo -e "== Entering the chroot enviormant..."; 
-    arch-chroot /mnt || return $?;
-
+    echo -e "== Creating /etc/fstab..."; genfstab -U /mnt > /mnt/etc/fstab || return $?;
+    echo -e "== Removing cache files..."; sudo rm -r /var/cache/pacman/pkg/* || return $?;
+    echo -e "== Entering the chroot enviormant..."; arch-chroot /mnt || return $?;
     echo -e "\n< Setup complated >";
 }
 
