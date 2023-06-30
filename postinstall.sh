@@ -19,12 +19,15 @@ TOINSTALL="${GPUDRIVER} ${DESKTOPENVIRONMANT} ${SOUNDMANAGER} ${TERMINALAPPS} ${
  ${DEVELOPAPPS} ${TOOLAPPS} ${INTERNETAPPS} ${GAMEAPPS} ${OTHERAPPS}";
 
 function install_packages() {
-    if [ ${DISPLAYMANAGER} == "lightdm" ]; then
-        TOINSTALL="${TOINSTALL} lightdm-gtk-greeter";
-    fi
-
     if [ ${DISPLAYMANAGER} ]; then
         TOINSTALL="${TOINSTALL} ${DISPLAYMANAGER}";
+        if [ ${DISPLAYMANAGER} == "lightdm" ]; then
+            TOINSTALL="${TOINSTALL} lightdm-gtk-greeter";
+        fi  
+    fi
+
+    if [ ${DESKTOPENVIRONMANT} == "i3-wm" ]; then
+        TOINSTALL="${TOINSTALL} i3status xorg-server xorg-xinit pavucontrol";
     fi
 
     if [ ${SOUNDMANAGER} == "pulseaudio" ]; then
