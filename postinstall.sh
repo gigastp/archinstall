@@ -49,7 +49,14 @@ function install_packages() {
     done
 }
 
-function app_setup() {
+function install_as_root() {
+    msg_beginTask "Installing packages..."; install_packages || return $?;
+
+    if [ ${DISPLAYMANAGER} ]; then
+        msg_beginTask "Configuring display manager(${DISPLAYMANAGER})...";    
+        sudo systemctl enable ${DISPLAYMANAGER}.service || return $?;
+    fi
+
     if ( contains "${TOINSTALL}" "clamav" ); then
         msg_beginTask "Configuring clamav...";
 
@@ -71,17 +78,6 @@ function app_setup() {
             && ufw default deny \
             && ufw enable || return $?
     fi
-}
-
-function install_as_root() {
-    msg_beginTask "Installing packages..."; install_packages || return $?;
-
-    if [ ${DISPLAYMANAGER} ]; then
-        msg_beginTask "Configuring display manager(${DISPLAYMANAGER})...";    
-        sudo systemctl enable ${DISPLAYMANAGER}.service || return $?;
-    fi
-
-    app_setup;
 }
 
 function install() {
