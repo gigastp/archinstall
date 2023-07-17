@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./general.sh;
+
 TIMEREGION=Europe;
 TIMECITY=Kiev;
 EDITOR=vi;
@@ -58,19 +60,19 @@ function install_bootloader() {
 }
 
 function install() {
-    echo "== Installing bootloader..."; install_bootloader || return $?;
+    msg_beginTask "Installing bootloader..."; install_bootloader || return $?;
     
-    echo "== Configuring timezone...";
+    msg_beginTask "Configuring timezone...";
     ln -sf /usr/share/zoneinfo/${TIMEREGION}/${TIMECITY} /etc/localtime \
     && hwclock --systohc || return $?;
 
-    echo "== Configuring locale..."; set_locale || return $?;
-    echo "== Creating user..."; create_user || return $?;
+    msg_beginTask "Configuring locale..."; set_locale || return $?;
+    msg_beginTask "Creating user..."; create_user || return $?;
 
-    echo "== Configuring network...";
+    msg_beginTask "Configuring network...";
     systemctl enable ${NETWORKMANAGER}.service || return $?;
 
-    echo -e "\n< Setup complated >";
+    msg_setupComplated;
 }
 
-install
+install;

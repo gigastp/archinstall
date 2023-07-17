@@ -1,6 +1,9 @@
 #!/bin/bash
 
+source ./general.sh;
+
 CPUMANUFACTURER=intel;
+KERNEL=linux
 EDITOR=vi;
 EXTRAPACKAGES="${CPUMANUFACTURER}-ucode grub sudo dhcpcd ${EDITOR}\
  bash-completion man-db man-pages texinfo";
@@ -20,18 +23,17 @@ function mount_partiotions() {
 }
 
 function install() {
-    echo -e  "== Mounting partiotions..."; mount_partiotions
+    msg_beginTask "Mounting partiotions..."; mount_partiotions
     while (( $? )); do
         echo -e "\nTry again:"; mount_partiotions;
     done
 
-    echo -e "== Installing system...";
-    pacstrap -K /mnt base linux linux-firmware ${EXTRAPACKAGES} || return $?;
+    msg_beginTask "Installing system...";
+    pacstrap -K /mnt base ${KERNEL} linux-firmware ${EXTRAPACKAGES} || return $?;
     
-    echo -e "== Creating /etc/fstab..."; genfstab -U /mnt > /mnt/etc/fstab || return $?;
-    echo -e "== Removing cache files..."; sudo rm -r /var/cache/pacman/pkg/* || return $?;
-    echo -e "== Entering the chroot enviormant..."; arch-chroot /mnt || return $?;
-    echo -e "\n< Setup complated >";
+    msg_beginTask "Creating /etc/fstab..."; genfstab -U /mnt > /mnt/etc/fstab || return $?;
+    msg_beginTask "Removing cache files..."; rm -r /var/cache/pacman/pkg/* || return $?;
+    msg_beginTask "Entering the chroot enviormant..."; arch-chroot /mnt || return $?;
 }
 
-install
+install;
