@@ -49,14 +49,7 @@ function install_packages() {
     done
 }
 
-function install_as_root() {
-    msg_beginTask "Installing packages..."; install_packages || return $?;
-
-    if [ ${DISPLAYMANAGER} ]; then
-        msg_beginTask "Configuring display manager(${DISPLAYMANAGER})...";    
-        sudo systemctl enable ${DISPLAYMANAGER}.service || return $?;
-    fi
-
+function apps_setup() {
     if ( contains "${TOINSTALL}" "clamav" ); then
         msg_beginTask "Configuring clamav...";
 
@@ -81,16 +74,15 @@ function install_as_root() {
 }
 
 function install() {
-    echo -en "Some tasks need root access(Enter to start):"; read -s;
-    sudo -E $(declare -f install_as_root); install_as_root" || return $?;
+    msg_beginTask "Installing packages..."; install_packages || return $?;
 
-    if [ ${SOUNDMANAGER} ]; then
-        msg_beginTask "Configuring sound manager(${SOUNDMANAGER})...";    
-        systemctl --user enable ${SOUNDMANAGER}.service || return $?;
+    if [ ${DISPLAYMANAGER} ]; then
+        msg_beginTask "Configuring display manager(${DISPLAYMANAGER})...";    
+        sudo systemctl enable ${DISPLAYMANAGER}.service || return $?;
     fi
 
-    msg_beginTask "Removing cache files(need root access, Enter to start or CTRL+C to skip)...";
-    read -s && sudo rm -r /var/cache/pacman/pkg/*;
+    apps_setup || return $?;
+    msg_beginTask "Removing cache files..."; rm -r /var/cache/pacman/pkg/* || return $?;
 
     msg_setupCompleted;
 }
