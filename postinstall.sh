@@ -86,7 +86,7 @@ function install_as_root() {
 
 function install() {
     echo -en "Some tasks need root access(Enter to start):"; read -s;
-    sudo install_as_root || return $?;
+    sudo `declare -f install_as_root`; install_as_root || return $?;
 
     if [ ${SOUNDMANAGER} ]; then
         msg_beginTask "Configuring sound manager(${SOUNDMANAGER})...";    
