@@ -93,10 +93,10 @@ function install() {
         systemctl --user enable ${SOUNDMANAGER}.service || return $?;
     fi
 
-    msg_beginTask "Removing cache files(need root, Enter to start or CTRL+C to skip)...";
+    msg_beginTask "Removing cache files(need root access, Enter to start or CTRL+C to skip)...";
     read -s && sudo rm -r /var/cache/pacman/pkg/*;
 
-    msg_setupComplated;
+    msg_setupCompleted;
 }
 
 install;

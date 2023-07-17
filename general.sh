@@ -13,6 +13,6 @@ function msg_beginTask() {
     echo -e "== ${*}";
 }
 
-function msg_setupComplated() {
+function msg_setupCompleted() {
     echo -e "\n< Setup completed >";
 }

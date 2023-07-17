@@ -72,7 +72,7 @@ function install() {
     msg_beginTask "Configuring network...";
     systemctl enable ${NETWORKMANAGER}.service || return $?;
 
-    msg_setupComplated;
+    msg_setupCompleted;
 }
 
 install;
