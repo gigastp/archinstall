@@ -1,3 +1,8 @@
+#!/bin/bash
+
+FILESYSTEM=btrfs;
+EDITOR=vi;
+
 function contains() {
     local ARR=$1;
     for word in ${ARR[@]}; do

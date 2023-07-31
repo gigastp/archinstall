@@ -6,7 +6,6 @@ GPUDRIVER=nvidia;
 DISPLAYMANAGER=lightdm;
 DESKTOPENVIRONMANT=plasma;
 SOUNDMANAGER=pulseaudio;
-EDITOR=vi;
 
 TERMINALAPPS="ufw clamav vim mc ranger ncdu htop neofetch";
 BASICAPPS="xfce4-terminal firefox thunar file-roller clamtk xed lximage-qt kolourpaint xreader djview vlc audacious libreoffice-still gimp qbittorrent";
