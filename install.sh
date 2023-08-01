@@ -29,7 +29,8 @@ function setup_partitions() {
     cryptsetup luksFormat "/dev/${BOOTPART}" \
         && cryptsetup open "/dev/${BOOTPART}" boot_container \
         && mkfs.fat -F 32 /dev/mapper/boot_container \
-        && mount -t fat /dev/mapper/boot_container /mnt/boot || return $?;
+        && mkdir /mnt/boot \
+        && mount /dev/mapper/boot_container /mnt/boot || return $?;
 
     if [ "${HOMEPART}" ]; then
         umount -q "/dev/${HOMEPART}";
@@ -42,6 +43,7 @@ function setup_partitions() {
         cryptsetup luksFormat "/dev/${HOMEPART}" \
             && cryptsetup open "/dev/${HOMEPART}" home_container \
             && ${MKFS} /dev/mapper/home_container \
+            && mkdir /mnt/home \
             && mount -t ${FILESYSTEM} /dev/mapper/home_container /mnt/home || return $?;
     fi
     
