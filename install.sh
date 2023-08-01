@@ -19,7 +19,7 @@ function setup_partitions() {
         MKFS="mkfs.${FILESYSTEM}";
     fi
 
-    umount -q /dev/${BOOTPART} && umount -q /dev/${SYSPART};
+    umount -q /dev/${BOOTPART}; umount -q /dev/${SYSPART};
     ${MKFS} /dev/${SYSPART} && mount "/dev/${SYSPART}" /mnt || return $?;
     # Boot part secure wipe
     cryptsetup open --type plain -d /dev/urandom "/dev/${BOOTPART}" to_be_wiped || return $?;
