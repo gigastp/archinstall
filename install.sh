@@ -13,8 +13,14 @@ function setup_partitions() {
     echo -n "Encrypted home part(empty for skip): "; read HOMEPART;
     echo -n "Swap part(empty for skip): "; read SWAPPART;
 
+    if [ "${FILESYSTEM}" == "btrfs" ]; then
+        MKFS="mkfs.btrfs -f";
+    else
+        MKFS="mkfs.${FILESYSTEM}";
+    fi
+
     umount -q /dev/${BOOTPART} && umount -q /dev/${SYSPART};
-    mkfs.${FILESYSTEM} /dev/${SYSPART} && mount "/dev/${SYSPART}" /mnt || return $?;
+    ${MKFS} /dev/${SYSPART} && mount "/dev/${SYSPART}" /mnt || return $?;
     # Boot part secure wipe
     cryptsetup open --type plain -d /dev/urandom "/dev/${BOOTPART}" to_be_wiped || return $?;
     dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress;
@@ -35,7 +41,7 @@ function setup_partitions() {
         cryptsetup open "/dev/${HOMEPART}" home_container \
         && echo "Note: pathphrase must be the same as user password" \
         && cryptsetup luksFormat "/dev/${HOMEPART}" \
-        && mkfs.${FILESYSTEM} /dev/mapper/home_container \
+        && ${MKFS} /dev/mapper/home_container \
         && mount -t ${FILESYSTEM} /dev/mapper/home_container /mnt/home || return $?;
     fi
     
