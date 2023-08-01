@@ -41,12 +41,53 @@ function create_user() {
             HOMEPART_UUID=`cryptsetup luksUUID "/dev/${HOMEPART}"` && break;
             echo -e "\nTry Again:"; $(exit 1);
         done
-
+        
+        # Configuring pam_mount
         cat << EOF > /etc/security/pam_mount.conf.xml
-<volume user="${USERNAME}" fstype="crypt" path="/dev/disk/by-partuuid/${HOMEPART_UUID}" \
-mountpoint="~" options="crypto_name="home-${USERNAME}",allow_discard,fstype=${FILESYSTEM}" />
-EOF
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE pam_mount SYSTEM "pam_mount.conf.xml.dtd">
 
+<!-- See pam_mount.conf(5) for a description. -->
+<pam_mount>
+		<!-- debug should come before everything else,
+		since this file is still processed in a single pass
+		from top-to-bottom -->
+        
+<debug enable="0" />
+		<!-- Volume definitions -->
+
+		<volume user="${USERNAME}" path="/dev/disk/by-uuid/${HOMEPART_UUID}"
+			fstype="crypt" mountpoint="~" />
+
+		<!-- pam_mount parameters: General tunables -->
+<!-- 
+<luserconf name=".pam_mount.conf.xml" />
+-->
+
+<!-- Note that commenting out mntoptions will give you the defaults.
+     You will need to explicitly initialize it with the empty string
+     to reset the defaults to nothing. -->
+
+<mntoptions allow="nosuid,nodev,loop,encryption,fsck,nonempty,allow_root,allow_other" />
+
+<!--
+<mntoptions deny="suid,dev" />
+<mntoptions allow="*" />
+<mntoptions deny="*" />
+-->
+
+<mntoptions require="nosuid,nodev" />
+
+<!-- requires ofl from hxtools to be present -->
+<logout wait="0" hup="no" term="no" kill="no" />
+
+		<!-- pam_mount parameters: Volume-related -->
+
+<mkmountpoint enable="1" remove="true" />
+
+</pam_mount>
+EOF
+        # Adding pam_mount to login modules
         cat << EOF > /etc/pam.d/system-login
 #%PAM-1.0
 
