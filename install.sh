@@ -34,7 +34,7 @@ function setup_partitions() {
         # Home part encryption
         cryptsetup open "/dev/${HOMEPART}" home_container \
         && echo "Note: pathphrase must be the same as user password" \
-        && cryptsetup luksFormat "/dev/${HOMEPART}" \        
+        && cryptsetup luksFormat "/dev/${HOMEPART}" \
         && mkfs.${FILESYSTEM} /dev/mapper/home_container \
         && mount -t ${FILESYSTEM} /dev/mapper/home_container /mnt/home || return $?;
     fi
