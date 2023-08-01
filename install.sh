@@ -29,10 +29,10 @@ function setup_partitions() {
         dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress;
         cryptsetup close to_be_wiped || return $?;
 
-        cryptsetup luksFormat /dev/sdX --offset 32768 --header header.img \
-            && cryptsetup open --header header.img /dev/sdX boot_container \
-            && mkdir /mnt/boot \        
-            && mv header.img /mnt/boot \ 
+        cryptsetup luksFormat "/dev/${BOOTPART}"  \
+            && cryptsetup open "/dev/${BOOTPART}" boot_container \
+            && mkdir /mnt/boot \
+            && mv header.img /mnt/boot \
             && mkfs.fat -F 32 /dev/mapper/boot_container \
             && mount /dev/mapper/boot_container /mnt/boot || return $?;
     fi
