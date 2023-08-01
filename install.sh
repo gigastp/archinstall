@@ -24,10 +24,8 @@ function setup_partitions() {
 
     echo && ls /sys/firmware/efi/efivars &> /dev/null;
     if (( $? == 0 )); then
-        umount -q "/dev/${EFIPART}"; 
-
         echo -n "EFI part: "; read EFIPART;
-        mkfs.fat -F 32 "/dev/${EFIPART}" \
+        umount -q "/dev/${EFIPART}"; mkfs.fat -F 32 "/dev/${EFIPART}" \
             && mkdir -p /mnt/efi \
             && mount "/dev/${EFIPART}" /mnt/efi || return $?;
 
