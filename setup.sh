@@ -7,29 +7,6 @@ TIMECITY=Kiev;
 NETWORKMANAGER=dhcpcd;
 BOOTDEV="";
 
-function install_bootloader() {
-    echo && ls /sys/firmware/efi/efivars &> /dev/null;
-    if (( $? == 0 )); then
-        echo -e "Enabling boot encryption..."
-        TMPFILE=`mktemp`; cat /etc/default/grub > ${TMPFILE};
-        echo -e "GRUB_ENABLE_CRYPTODISK=y\n" > /etc/default/grub;
-        cat ${TMPFILE} >> /etc/default/grub;
-
-        mkdir /efi || return $?;
-        grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB || return $?;
-    else
-        ($exit 1);
-    fi
-
-    while (( $? )); do
-        echo -n "Boot part: "; read BOOTPART;
-        grub-install --target=i386-pc "/dev/${BOOTPART}" && break;
-        echo "Try Again: "; $(exit 1);
-    done
-    
-    grub-mkconfig -o /boot/grub/grub.cfg || return $?;
-}
-
 function set_locale() {
     echo -e "\nUncomment en_US.UTF-8 UTF-8 and other needed locales";
     echo -n "Edit, then save and close file(press enter to start editing): "; read -s; echo;
@@ -58,9 +35,7 @@ function create_user() {
     done
 
     if [ -a /dev/mapper/home_container ]; then
-        echo "Setup login time mounting for /home...";
-
-        $(exit 1);
+        echo "Setup login time mounting for /home..."; $(exit 1);
         while (( $? )); do
             echo -n "Home part: "; read HOMEPART;        
             HOMEPART_UUID=`cryptsetup luksUUID "/dev/${HOMEPART}"` && break;
@@ -105,15 +80,36 @@ EOF
     cat ${TMPFILE} >> /etc/sudoers;
 }
 
-function install() {
-    msg_beginTask "Installing bootloader..."; install_bootloader || return $?;
+function install_bootloader() {
+    echo && ls /sys/firmware/efi/efivars &> /dev/null;
+    if (( $? == 0 )); then
+        echo -e "Enabling boot encryption..."
+        TMPFILE=`mktemp`; cat /etc/default/grub > ${TMPFILE};
+        echo -e "GRUB_ENABLE_CRYPTODISK=y\n" > /etc/default/grub;
+        cat ${TMPFILE} >> /etc/default/grub;
 
+        grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB || return $?;
+    else
+        ($exit 1);
+    fi
+
+    while (( $? )); do
+        echo -n "Boot part: "; read BOOTPART;
+        grub-install --target=i386-pc "/dev/${BOOTPART}" && break;
+        echo "Try Again: "; $(exit 1);
+    done
+    
+    grub-mkconfig -o /boot/grub/grub.cfg || return $?;
+}
+
+function install() {
     msg_beginTask "Configuring timezone...";
     ln -sf /usr/share/zoneinfo/${TIMEREGION}/${TIMECITY} /etc/localtime \
     && hwclock --systohc || return $?;
 
     msg_beginTask "Configuring locale..."; set_locale || return $?;
     msg_beginTask "Creating user..."; create_user || return $?;
+    msg_beginTask "Installing bootloader..."; install_bootloader || return $?;
 
     msg_beginTask "Configuring network...";
     systemctl enable ${NETWORKMANAGER}.service || return $?;
