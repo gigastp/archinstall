@@ -4,7 +4,7 @@ source ./general.sh;
 
 CPUMANUFACTURER=intel;
 KERNEL=linux;
-EXTRAPACKAGES="${CPUMANUFACTURER}-ucode grub pam_mount sudo dhcpcd ${EDITOR}\
+EXTRAPACKAGES="${CPUMANUFACTURER}-ucode grub efibootmgr pam_mount sudo dhcpcd ${EDITOR}\
  bash-completion man-db man-pages texinfo";
 
 function setup_partitions() {
@@ -31,10 +31,9 @@ function setup_partitions() {
 
         cryptsetup luksFormat "/dev/${BOOTPART}"  \
             && cryptsetup open "/dev/${BOOTPART}" boot_container \
-            && mkdir /mnt/boot \
-            && mv header.img /mnt/boot \
+            && mkdir -p /mnt/boot/EFI \
             && mkfs.fat -F 32 /dev/mapper/boot_container \
-            && mount /dev/mapper/boot_container /mnt/boot || return $?;
+            && mount /dev/mapper/boot_container /mnt/boot/EFI || return $?;
     fi
 
     if [ "${HOMEPART}" ]; then
@@ -67,7 +66,7 @@ function install() {
     pacstrap -K /mnt base ${KERNEL} linux-firmware ${EXTRAPACKAGES} || return $?;
     
     msg_beginTask "Creating /etc/fstab..."; genfstab -U /mnt > /mnt/etc/fstab || return $?;
-    msg_beginTask "Removing cache files..."; rm -r /var/cache/pacman/pkg/* || return $?;
+    msg_beginTask "Removing cache files..."; rm -r /mnt/var/cache/pacman/pkg/* || return $?;
     msg_beginTask "Entering the chroot enviormant..."; arch-chroot /mnt || return $?;
 }
 
