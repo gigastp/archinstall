@@ -24,6 +24,11 @@ function setup_partitions() {
 
     echo && ls /sys/firmware/efi/efivars &> /dev/null;
     if (( $? == 0 )); then
+        echo -n "EFI part: "; read EFIPART;
+        mkfs.fat -F 32 "/dev/${EFIPART}" \
+            && mkdir /efi \
+            && mount "/dev/${EFIPART}" /efi || return $?;
+
         # Boot part encryption
         cryptsetup open --type plain -d /dev/urandom "/dev/${BOOTPART}" to_be_wiped || return $?;
         dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress;
