@@ -4,8 +4,6 @@ source ./general.sh;
 
 CPUMANUFACTURER=intel;
 KERNEL=linux;
-
-EDITOR=vi;
 EXTRAPACKAGES="${CPUMANUFACTURER}-ucode grub pam_mount sudo dhcpcd ${EDITOR}\
  bash-completion man-db man-pages texinfo";
 
@@ -35,10 +33,10 @@ function setup_partitions() {
             && cryptsetup close to_be_wiped || return $?;
         # Home part encryption
         cryptsetup open "/dev/${HOMEPART}" home_container \
-            && echo "Note: pathphrase must be the same as user password" \
-            && cryptsetup luksFormat "/dev/${HOMEPART}" \        
-            && mkfs.${FILESYSTEM} /dev/mapper/home_container \
-            && mount -t ${FILESYSTEM} /dev/mapper/home_container /mnt/home || return $?;
+        && echo "Note: pathphrase must be the same as user password" \
+        && cryptsetup luksFormat "/dev/${HOMEPART}" \        
+        && mkfs.${FILESYSTEM} /dev/mapper/home_container \
+        && mount -t ${FILESYSTEM} /dev/mapper/home_container /mnt/home || return $?;
     fi
     
     if [ "${SWAPPART}" ]; then
