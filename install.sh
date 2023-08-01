@@ -19,12 +19,12 @@ function setup_partitions() {
         MKFS="mkfs.${FILESYSTEM}";
     fi
 
-    umount -ql "/dev/${BOOTPART}"; umount -ql "/dev/${SYSPART}";
+    umount -q "/dev/${BOOTPART}"; umount -q "/dev/${SYSPART}";
     ${MKFS} "/dev/${SYSPART}" && mount "/dev/${SYSPART}" /mnt || return $?;
 
     echo && ls /sys/firmware/efi/efivars &> /dev/null;
     if (( $? == 0 )); then
-        umount -ql "/dev/${EFIPART}"; 
+        umount -q "/dev/${EFIPART}"; 
 
         echo -n "EFI part: "; read EFIPART;
         mkfs.fat -F 32 "/dev/${EFIPART}" \
@@ -44,7 +44,7 @@ function setup_partitions() {
     fi
 
     if [ "${HOMEPART}" ]; then
-        umount -ql "/dev/${HOMEPART}";
+        umount -q "/dev/${HOMEPART}";
         # Home part encryption
         cryptsetup open --type plain -d /dev/urandom "/dev/${HOMEPART}" to_be_wiped || return $?;
         dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress;
@@ -57,7 +57,7 @@ function setup_partitions() {
     fi
     
     if [ "${SWAPPART}" ]; then
-        umount -ql "/dev/${SWAPPART}"; swapon "/dev/${SWAPPART}" || return $?;
+        umount -q "/dev/${SWAPPART}"; swapon "/dev/${SWAPPART}" || return $?;
     fi
 }
 
