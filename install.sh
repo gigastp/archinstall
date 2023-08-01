@@ -21,24 +21,29 @@ function setup_partitions() {
 
     umount -q /dev/${BOOTPART}; umount -q /dev/${SYSPART};
     ${MKFS} /dev/${SYSPART} && mount "/dev/${SYSPART}" /mnt || return $?;
-    # Boot part secure wipe
-    cryptsetup open --type plain -d /dev/urandom "/dev/${BOOTPART}" to_be_wiped || return $?;
-    dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress;
-    cryptsetup close to_be_wiped || return $?;
-    # Boot part encryption
-    cryptsetup luksFormat "/dev/${BOOTPART}" \
-        && cryptsetup open "/dev/${BOOTPART}" boot_container \
-        && mkfs.fat -F 32 /dev/mapper/boot_container \
-        && mkdir /mnt/boot \
-        && mount /dev/mapper/boot_container /mnt/boot || return $?;
+
+    echo && ls /sys/firmware/efi/efivars &> /dev/null;
+    if (( $? == 0 )); then
+        # Boot part encryption
+        cryptsetup open --type plain -d /dev/urandom "/dev/${BOOTPART}" to_be_wiped || return $?;
+        dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress;
+        cryptsetup close to_be_wiped || return $?;
+
+        cryptsetup luksFormat /dev/sdX --offset 32768 --header header.img \
+            && cryptsetup open --header header.img /dev/sdX boot_container \
+            && mkdir /mnt/boot \        
+            && mv header.img /mnt/boot \ 
+            && mkfs.fat -F 32 /dev/mapper/boot_container \
+            && mount /dev/mapper/boot_container /mnt/boot || return $?;
+    fi
 
     if [ "${HOMEPART}" ]; then
         umount -q "/dev/${HOMEPART}";
-        # Home part secure wipe
+        # Home part encryption
         cryptsetup open --type plain -d /dev/urandom "/dev/${HOMEPART}" to_be_wiped || return $?;
         dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress;
         cryptsetup close to_be_wiped || return $?;
-        # Home part encryption
+
         echo "Note: pathphrase must be the same as user password";
         cryptsetup luksFormat "/dev/${HOMEPART}" \
             && cryptsetup open "/dev/${HOMEPART}" home_container \

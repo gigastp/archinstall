@@ -35,7 +35,7 @@ function create_user() {
     done
 
     if [ -a /dev/mapper/home_container ]; then
-        echo "Setup encrypted /home mounting...";
+        echo "Setup login time mounting for /home...";
 
         $(exit 1);
         while (( $? )); do
@@ -45,7 +45,8 @@ function create_user() {
         done
 
         cat << EOF > /etc/security/pam_mount.conf.xml
-<volume user="${USERNAME}" fstype="crypt" path="/dev/disk/by-partuuid/${HOMEPART_UUID}" mountpoint="~" options="crypto_name=home-${USERNAME},allow_discard,fstype=${FILESYSTEM}" />
+<volume user="${USERNAME}" fstype="crypt" path="/dev/disk/by-partuuid/${HOMEPART_UUID}" \
+mountpoint="~" options="crypto_name=home-${USERNAME},allow_discard,fstype=${FILESYSTEM}" />
 EOF
 
         cat << EOF > /etc/pam.d/system-login
@@ -82,22 +83,23 @@ EOF
 }
 
 function install_bootloader() {
-    echo -e "Enabling boot encryption..."
-    TMPFILE=`mktemp`; cat /etc/default/grub > ${TMPFILE};
-    echo -e "GRUB_ENABLE_CRYPTODISK=y\n" > /etc/default/grub;
-    cat ${TMPFILE} >> /etc/default/grub;
-
     echo && ls /sys/firmware/efi/efivars &> /dev/null;
-    if (( $? )); then
-        BOOTDEV=/dev/mapper/boot_container
-        grub-install --target=i386-pc /dev/${BOOTDEV};
-        while (( $? )); do
-            echo -e "\nTry again:\nBoot dev: "; read BOOTDEV;
-            grub-install --target=i386-pc "/dev/${BOOTDEV}";            
-        done
-    else
+    if (( $? == 0 )); then
+        echo -e "Enabling boot encryption..."
+        TMPFILE=`mktemp`; cat /etc/default/grub > ${TMPFILE};
+        echo -e "GRUB_ENABLE_CRYPTODISK=y\n" > /etc/default/grub;
+        cat ${TMPFILE} >> /etc/default/grub;
+
         grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB || return $?;
+    else
+        ($exit 1);
     fi
+
+    while (( $? )); do
+        echo -n "Boot part: "; read BOOTPART;
+        grub-install --target=i386-pc "/dev/${BOOTPART}" && break;
+        echo "Try Again: "; $(exit 1);
+    done
     
     grub-mkconfig -o /boot/grub/grub.cfg || return $?;
 }
