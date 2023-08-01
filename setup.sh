@@ -44,7 +44,7 @@ function create_user() {
 
         cat << EOF > /etc/security/pam_mount.conf.xml
 <volume user="${USERNAME}" fstype="crypt" path="/dev/disk/by-partuuid/${HOMEPART_UUID}" \
-mountpoint="~" options="crypto_name=home-${USERNAME},allow_discard,fstype=${FILESYSTEM}" />
+mountpoint="~" options="crypto_name="home-${USERNAME}",allow_discard,fstype=${FILESYSTEM}" />
 EOF
 
         cat << EOF > /etc/pam.d/system-login

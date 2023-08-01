@@ -34,8 +34,8 @@ function setup_partitions() {
         dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress;
         cryptsetup close to_be_wiped || return $?;
 
-        cryptsetup luksFormat "/dev/${BOOTPART}"  \
-            && cryptsetup --hash sha256 --pbkdf pbkdf2 open "/dev/${BOOTPART}" boot_container \
+        cryptsetup --hash sha256 --pbkdf pbkdf2 luksFormat "/dev/${BOOTPART}"  \
+            && cryptsetup open "/dev/${BOOTPART}" boot_container \
             && mkdir -p /mnt/boot \
             && mkfs.fat -F 32 /dev/mapper/boot_container \
             && mount /dev/mapper/boot_container /mnt/boot || return $?;
@@ -49,8 +49,8 @@ function setup_partitions() {
         cryptsetup close to_be_wiped || return $?;
 
         echo "Note: pathphrase must be the same as user password";
-        cryptsetup luksFormat "/dev/${HOMEPART}" \
-            && cryptsetup --hash sha256 --pbkdf open "/dev/${HOMEPART}" home_container \
+        cryptsetup  --hash sha256 --pbkdf pbkdf2 luksFormat "/dev/${HOMEPART}" \
+            && cryptsetup open "/dev/${HOMEPART}" home_container \
             && ${MKFS} /dev/mapper/home_container || return $?;
     fi
     
