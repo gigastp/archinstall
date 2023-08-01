@@ -15,7 +15,8 @@ function install_bootloader() {
         echo -e "GRUB_ENABLE_CRYPTODISK=y\n" > /etc/default/grub;
         cat ${TMPFILE} >> /etc/default/grub;
 
-        grub-install --target=x86_64-efi --efi-directory=/boot/EFI --bootloader-id=GRUB || return $?;
+        mkdir /efi || return $?;
+        grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB || return $?;
     else
         ($exit 1);
     fi
