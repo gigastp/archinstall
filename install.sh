@@ -16,9 +16,9 @@ function setup_partitions() {
     umount -q /dev/${BOOTPART} && umount -q /dev/${SYSPART};
     mkfs.${FILESYSTEM} /dev/${SYSPART} && mount "/dev/${SYSPART}" /mnt || return $?;
     # Boot part secure wipe
-    cryptsetup open --type plain -d /dev/urandom "/dev/${BOOTPART}" to_be_wiped \
-        && dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress \
-        && cryptsetup close to_be_wiped || return $?;
+    cryptsetup open --type plain -d /dev/urandom "/dev/${BOOTPART}" to_be_wiped || return $?;
+    dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress;
+    cryptsetup close to_be_wiped || return $?;
     # Boot part encryption
     cryptsetup open "/dev/${BOOTPART}" boot_container \
         && cryptsetup luksFormat "/dev/${BOOTPART}" \
@@ -28,9 +28,9 @@ function setup_partitions() {
     if [ "${HOMEPART}" ]; then
         umount -q "/dev/${HOMEPART}";
         # Home part secure wipe
-        cryptsetup open --type plain -d /dev/urandom "/dev/${HOMEPART}" to_be_wiped \
-            && dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress \
-            && cryptsetup close to_be_wiped || return $?;
+        cryptsetup open --type plain -d /dev/urandom "/dev/${HOMEPART}" to_be_wiped || return $?;
+        dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress;
+        cryptsetup close to_be_wiped || return $?;
         # Home part encryption
         cryptsetup open "/dev/${HOMEPART}" home_container \
         && echo "Note: pathphrase must be the same as user password" \
