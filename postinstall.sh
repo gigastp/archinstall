@@ -65,10 +65,7 @@ function apps_setup() {
 
     if ( contains "${TOINSTALL}" "ufw" ); then
         msg_beginTask "Configuring ufw...";
-
-        systemctl enable ufw.service \
-            && ufw default deny \
-            && ufw enable || return $?
+        systemctl enable ufw.service;
     fi
 }
 

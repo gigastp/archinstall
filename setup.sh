@@ -87,7 +87,7 @@ function create_user() {
 
 </pam_mount>
 EOF
-        # Adding pam_mount to login modules
+        # Adding pam_mount to login modules + avoid double mount error
         cat << EOF > /etc/pam.d/system-login
 #%PAM-1.0
 
